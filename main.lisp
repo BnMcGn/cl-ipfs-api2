@@ -15,17 +15,21 @@
                                ;; only necessary if yours deviates from the
                                ;; default path. only used for #'pubsub-*
 
-
+(defparameter *external-format* drakma:*drakma-default-external-format*
+  "Allows control of the external format used when reading from ipfs. The
+   default, borrowed from drakma, is :latin-1. :utf-8 will cause the the
+   resource to be treated as unicode UTF 8. A list of all available formats
+   can be found at https://edicl.github.io/flexi-streams/#external-formats")
 
 ;; —————————————————————————————————————
 ;; BASE
 
 ;; STRING LIST [:LIST :BOOLEAN :SYMBOL] → STRING | ALIST | (NIL STRING)
 (defun ipfs-call (call arguments &key (parameters nil) (want-stream nil)
-                        (method :POST))
+                        (method :POST) (external-format *external-format*))
   "Make an IPFS HTTP API call. Quite commonly used.
    Some calls return strings/raw data, and others return JSON.
-   When strings/arbitrary data are recieved, they're returned verbatim.
+   When strings/arbitrary data are received, they're returned verbatim.
    But, when JSON is returned, it is parsed into a hashtable.
    If the JSON is 'error JSON', I.E., it signals that an error has been
    recieved, two values are returned: NIL and the string-error-message."
@@ -36,6 +40,7 @@
             :method method
             :url-encoder #'ipfs::url-encode
             :parameters parameters
+            :external-format-in external-format
             :want-stream want-stream))))
     (if want-stream
         (car result)

@@ -169,4 +169,5 @@
     ;; version calls
     :version
    :version-deps
-   #:with-files-write))
+   #:with-files-write
+   #:*external-format*))
